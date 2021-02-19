@@ -1,4 +1,4 @@
-name: IPFS-Pinner-Front
+name: IPFS-Pinner-Back
 
 on:
   push:
