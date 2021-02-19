@@ -18,6 +18,13 @@ func main() {
 		log.Fatalln("Missing TOKEN env")
 	}
 
+	dbAddr := os.Getenv("DB_URL")
+	dbPwd := os.Getenv("DB_PASSWORD")
+
+	if dbAddr == "" || dbPwd == "" {
+		log.Fatalln("Missing DB_URL or DB_PASSWORD")
+	}
+
 	port := flag.String("port", "8090", "Server port")
 	flag.Parse()
 
@@ -29,7 +36,7 @@ func main() {
 
 	defer ipfs.Close()
 
-	err = database.Init("localhost:5432", "admin", "abcdefg123", "ipfs-pinner")
+	err = database.Init(dbAddr, "admin", dbPwd, "ipfs-pinner")
 
 	if err != nil {
 		panic(err)

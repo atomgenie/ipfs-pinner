@@ -1,0 +1,38 @@
+version: "3.0"
+
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            POSTGRES_PASSWORD: "$DB_PASSWORD"
+            POSTGRES_USER: admin
+            POSTGRES_DB: ipfs-pinner
+        ports:
+            - 5432:5432
+
+    adminer:
+        image: adminer:latest
+        ports:
+            - 8080:8080
+    back:
+        build:
+            context: .
+            dockerfile: ./infra/dockerfiles/back/Dockerfile
+        environment:
+            TOKEN: $TOKEN
+            DB_URL: postgres:5432
+            DB_PASSWORD: $DB_PASSWORD
+        ports:
+            - 8090:8090
+        depends_on:
+            - postgres
+    front:
+        build:
+            context: .
+            dockerfile: ./infra/dockerfiles/front/Dockerfile
+        environment:
+            BACK_URL: http://back:8090
+        ports:
+            - 5000:8080
+
+
