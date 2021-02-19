@@ -30,5 +30,7 @@ jobs:
         with:
           push: true
           file: infra/dockerfiles/front/Dockerfile
-          tags: ghcr.io/atomgenie/ipfs-pinner-front:${{steps.vars.outputs.tag}}
+          tags: |
+            ghcr.io/atomgenie/ipfs-pinner-front:${{steps.vars.outputs.tag}}
+            ghcr.io/atomgenie/ipfs-pinner-front:latest
           context: .
