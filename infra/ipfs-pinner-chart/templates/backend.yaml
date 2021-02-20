@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-ipfs-pinner-backend
+  labels:
+    app: {{ .Release.Name }}-ipfs-pinner-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-ipfs-pinner-backend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-ipfs-pinner-backend
+    spec:
+      containers:
+      - name: ipfs-pinner-backend
+        image: ghcr.io/atomgenie/ipfs-pinner-back:{{ .Values.imageVersion }}
+        ports:
+        - containerPort: 8090
+        env:
+        - name: DB_URL
+          value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local:5432
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-db-password
+              key: value
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-token
+              key: value
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-ipfs-pinner-back-service
+spec:
+  ports:
+  - port: 8090
+    targetPort: 8090
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ .Release.Name }}-ipfs-pinner-backend
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-ipfs-pinner-back-virtual-service
+spec:
+  hosts:
+  - {{ .Release.Name }}-ipfs-pinner-back-service.{{ .Release.Namespace }}.svc.cluster.local
+  http:
+  - name: "backend"
+    route:
+    - destination:
+        host: {{ .Release.Name }}-ipfs-pinner-back-service.{{ .Release.Namespace }}.svc.cluster.local

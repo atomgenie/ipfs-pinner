@@ -1,0 +1,9 @@
+postgresql:
+  global:
+    postgresql:
+      postgresqlDatabase: ipfs-pinner
+      postgresqlUsername: admin
+      postgresqlPassword: <DB PASSWORD>
+
+imageVersion: "0.0.1"
+token: <TOKEN>
