@@ -8,7 +8,6 @@ import (
 	"github.com/atomgenie/ipfs-pinner/back/actions"
 	"github.com/atomgenie/ipfs-pinner/back/database"
 	iface "github.com/ipfs/interface-go-ipfs-core"
-	"github.com/jackc/pgx/v4"
 )
 
 var instance *actions.Instance
@@ -86,19 +85,18 @@ func getListPin(res http.ResponseWriter, req *http.Request) {
 	chanResponse := make(chan getListPinRes)
 
 	repo := database.NewHashRepository()
-	for _, pin := range pins {
 
-		go func(pin string) {
+	go func() {
+		for _, pin := range pins {
 			query, err := repo.GetByHash(pin)
 
-			if err == pgx.ErrNoRows {
+			if err != nil {
 				chanResponse <- getListPinRes{Hash: pin, Name: pin}
 			} else {
 				chanResponse <- getListPinRes{Hash: pin, Name: query.Name}
 			}
-		}(pin)
-
-	}
+		}
+	}()
 
 	for range pins {
 		responseData = append(responseData, <-chanResponse)

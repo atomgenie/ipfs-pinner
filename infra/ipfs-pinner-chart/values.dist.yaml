@@ -5,5 +5,5 @@ postgresql:
       postgresqlUsername: admin
       postgresqlPassword: <DB PASSWORD>
 
-imageVersion: "v0.0.1"
+imageVersion: "v0.0.2"
 token: <TOKEN>

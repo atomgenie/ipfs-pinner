@@ -29,7 +29,6 @@ func (HashRepository) List() ([]HashDB, error) {
 		return nil, err
 	}
 
-	defer rows.Close()
 	resp := []HashDB{}
 
 	for rows.Next() {

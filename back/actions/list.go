@@ -15,6 +15,12 @@ func (i *Instance) ListPins() ([]string, error) {
 	toRet := []string{}
 
 	for pin := range out {
+		pinType := pin.Type()
+
+		if pinType != "recursive" {
+			continue
+		}
+
 		toRet = append(toRet, pin.Path().Cid().String())
 	}
 
